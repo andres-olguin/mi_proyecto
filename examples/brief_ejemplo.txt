@@ -1,0 +1,7 @@
+# Brief ficticio; no utilizar datos reales de clientes
+Objetivo: Reducir el tiempo para preparar propuestas de servicios digitales
+Actor: Ejecutivo comercial
+Requisito: Registrar necesidades aportadas por el prospecto
+Requisito: Exportar un borrador revisable
+Restricción: La propuesta debe recibir aprobación humana antes de enviarse
+El presupuesto todavía está por definir

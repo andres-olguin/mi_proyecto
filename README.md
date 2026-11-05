@@ -1,32 +1,58 @@
-# Brief2Scope — prototipo local de extracción de requisitos
+# Brief2Scope — Ingeniería de requisitos desde briefs
 
-Proyecto experimental para transformar un brief de texto en una primera lista **revisable** de objetivos, actores, requisitos y restricciones. No utiliza modelos de IA, no valida requisitos con clientes y **no** genera especificaciones contractual o técnicamente aprobadas.
+**Prototipo local para organizar solicitudes comerciales** en una primera lista de objetivos, actores, requisitos y restricciones, con referencias a las líneas del documento de origen.
 
-## Estado verificable
+> **Estado:** CLI Python con extracción **determinista de etiquetas**, no sistema de IA semántica ni herramienta que genere contratos aprobados. Los resultados necesitan interpretación y revisión humana.
 
-- Implementación inicial propuesta: analizador determinista de líneas etiquetadas en Python (biblioteca estándar).
-- Entrada local mediante archivo UTF-8; salida JSON a stdout. Sin conexión a servicios externos.
-- Mantener el documento original y solicitar revisión humana antes de convertir los hallazgos en un alcance comercial.
-- El archivo histórico `app.txt` permanece sin modificaciones para conservar el inicio del repositorio.
+## Problema que aborda
 
-## Uso
+Las solicitudes de sitios web, automatizaciones y software llegan en correos o documentos sin formato común. Brief2Scope permite crear un inventario inicial a partir de líneas con un prefijo conocido y exportarlo como JSON estructurado.
 
-Requiere Python 3.10+.
+## Entrada admitida
+
+```text
+Objetivo: Disminuir tiempo de preparación de propuestas
+Actor: Ejecutivo comercial
+Requisito: Registrar necesidades entregadas por el prospecto
+Requisito: Exportar un borrador para revisión
+Restricción: No enviar una propuesta sin aprobación
+El presupuesto sigue pendiente de confirmar
+```
+
+Las cuatro etiquetas se procesan de forma explícita; la línea sin etiqueta se conserva como nota, **no como requisito inferido automáticamente**. El algoritmo admite tildes en etiquetas y conserva el número de línea de origen.
+
+## Ejecutar localmente
+
+**Requisitos:** Python 3.10+, sin servicios externos ni dependencias adicionales.
 
 ```bash
 python -m src.brief2scope examples/brief_ejemplo.txt
 python -m unittest discover -s tests -v
 ```
 
-Etiquetas admitidas: `objetivo:`, `actor:`, `requisito:`, `restriccion:` (también acepta tildes). Las líneas sin etiquetas se registran como notas. Las listas no son clasificadas automáticamente ni se interpreta lenguaje natural ambiguo.
+La primera instrucción imprime JSON con `objectives`, `actors`, `requirements`, `constraints`, `notes` y `warnings`. Los requisitos reciben IDs `REQ-001`, `REQ-002` etc. El programa rechaza entradas vacías o superiores al límite configurado de caracteres.
 
-**Privacidad:** nunca ingreses datos personales, financieros ni secretos reales en demostraciones públicas. Esta herramienta solo lee el fichero local y escribe a la salida estándar; redireccionar el resultado es decisión del operador.
+## Arquitectura
 
-## Siguientes hitos
+| Ruta | Componente |
+|---|---|
+| [`src/brief2scope.py`](src/brief2scope.py) | Parser y CLI |
+| [`examples/brief_ejemplo.txt`](examples/brief_ejemplo.txt) | Brief completamente ficticio |
+| [`tests/`](tests/) | Validación de etiquetas, casos límite y errores |
+| [`.github/workflows/python-tests.yml`](.github/workflows/python-tests.yml) | Comprobación automatizada |
+| [`docs/`](docs/) | Estudio de evolución y madurez técnica |
 
-1. Definir esquema de requisitos y criterios de aceptación con un cliente de prueba.
-2. Validar requisitos repetidos, dependencias y ambigüedades sin generar certezas ficticias.
-3. Exportar borradores Markdown/JSON con historial de revisiones.
-4. Añadir pruebas de caracteres, tamaños y entradas malformadas; evaluar entrevistas antes de cualquier propuesta comercial.
+## Límites y privacidad
 
-Consulta también `docs/ESTUDIO_DE_EVOLUCION_2026-10-30.md`.
+- No extrae semánticamente requisitos de texto libre sin etiquetar.
+- No verifica contradicciones, prioridades, estimaciones de esfuerzo ni aceptación del cliente.
+- No sustituye entrevistas, criterios de aceptación o contratos firmados.
+- Aunque procesa documentos locales sin servicios externos, un brief puede contener secretos comerciales: proteger sus ficheros y resultados.
+
+## Hoja de ruta
+
+Agregar esquema JSON versionado, estados de revisión, trazabilidad entre requisitos y solicitudes, exportación controlada, pruebas de documentos más complejos y validación de utilidad con agencias y desarrolladores.
+
+[Plan de escalabilidad](docs/ARCHITECTURE_SCALABILITY_2026-11-04.md) · [Estudio de evolución](docs/ESTUDIO_DE_EVOLUCION_2026-10-30.md).
+
+**Titularidad:** confirmar derechos de los briefs de clientes antes de procesarlos o publicarlos.
